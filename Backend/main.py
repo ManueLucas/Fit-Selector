@@ -32,7 +32,10 @@ settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
 # api_key = os.getenv("GEMINI_API_KEY")
 # mongo_uri = os.getenv("MONGO_URI")
 # Create a new client and connect to the server
-client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
+mongo_client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
+mongo_db = client["my_database"]
+clothing = mongo_db["clothing"]
+
 
 app = FastAPI()
 client = genai.Client(api_key=settings.gemini_api_key)
@@ -73,6 +76,24 @@ async def add_image(file: UploadFile = File(...)):
 
     return {"embedding": response}
 
+@app.get("/api/random_outfit/{category}")
+def random_outfit(category: str, userid: Annotated[str, Depends(authenticated_user)]):
+    pipeline = [
+        {"$match": category},
+        {"$sample": {"size": 1}}
+    ]
+    
+    random_doc_cursor = my_collection.aggregate(pipeline)
+    
+    random_doc = next(random_doc_cursor, None) # Get the first (and only) document
+    
+    if random_doc:
+        return {category: random_doc}
+        # print("Random document pulled using $sample:")
+        # pprint.pprint(random_doc)
+    else:
+        print("No documents found in the collection.")
+    # return {"random": []}
 
 @app.get("/image/{image_id}")
 def get_image(image_id: str, _: Annotated[str, Depends(authenticated_user)]):
