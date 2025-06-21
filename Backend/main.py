@@ -76,10 +76,16 @@ async def add_image(file: UploadFile = File(...)):
 
     return {"embedding": response}
 
-@app.get("/api/random_outfit/{category}")
-def random_outfit(category: str, userid: Annotated[str, Depends(authenticated_user)]):
+@app.get("/api/random_outfit/{product_type}")
+def random_outfit(product_type: str, userid: Annotated[str, Depends(authenticated_user)]):
+
+    filter_criteria = {
+        "product_type": product_type,
+        user_id: userid
+    }
+
     pipeline = [
-        {"$match": category},
+        {"$match": filter_criteria},
         {"$sample": {"size": 1}}
     ]
     
