@@ -6,10 +6,17 @@ from google import genai
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+
 api_key = os.getenv("GEMINI_API_KEY")
+mongo_uri = os.getenv("MONGO_URI")
+# Create a new client and connect to the server
+client = MongoClient(mongo_uri, server_api=ServerApi('1'))
+
 
 app = FastAPI()
-client = genai.Client(api_key=api_key)  # ← pass the variable here
+client = genai.Client(api_key=api_key)
 
 @app.post("/api/add_image")
 def add_image(file: UploadFile = File(...)):
