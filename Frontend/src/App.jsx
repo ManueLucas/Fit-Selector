@@ -5,6 +5,7 @@ import Options from "./options";
 
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 
+import ProtectedContent from './ProtectedContent';
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                 </SignedOut>
                 <SignedIn>
                     <UserButton />
+                    <ProtectedContent />
                 </SignedIn>
             </header>
             <h1 id="h1-name">Fit Selector</h1>

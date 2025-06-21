@@ -2,6 +2,10 @@ from clerk_backend_api import authenticate_request, AuthenticateRequestOptions
 from fastapi import HTTPException, Request
 from starlette import status
 
+import config
+
+settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
+
 
 async def authenticated_user(request: Request):
     credentials_exception = HTTPException(
@@ -10,7 +14,6 @@ async def authenticated_user(request: Request):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        import settings
         # from app.main import settings  # to prevent circular import
         request_state = authenticate_request(
             request,
