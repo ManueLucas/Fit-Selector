@@ -173,3 +173,13 @@ font-size: 1.2rem;
   margin-top: 6px;
   margin-left: 82px;
 }
+
+#button-reset, #button-generate {
+  background: white;
+  border: 0.6px solid lightgray;
+  font-family: "Montserrat", sans-serif;
+  padding: 10px 20px;
+  border-radius: 20%;
+  font-weight: 400;
+  font-size: 1rem;
+}

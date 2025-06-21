@@ -13,11 +13,18 @@ function App() {
                 What kind of fit do you want to wear today?
             </h1>
             <div id="div-input">
-                <input type="text" placeholder="e.g. I want to look like Chris Hemsworth!" name="" id="input-fit" />
+                <input
+                    type="text"
+                    placeholder="e.g. I want to look like Chris Hemsworth!"
+                    name=""
+                    id="input-fit"
+                />
             </div>
             <div id="div-input-file">
-                <input type="file" id="input-file" />
+                <input type="file" id="input-file" /> 
             </div>
+                <button id="button-reset">Reset Preferences</button>
+                <button id="button-generate">Generate Fit</button>
         </>
     );
 }
