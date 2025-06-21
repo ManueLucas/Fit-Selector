@@ -15,6 +15,8 @@ from auth import authenticated_user
 from pydantic import BaseModel
 
 import config
+from PIL import Image
+import io
 
 
 class UserResponse(BaseModel):
@@ -34,7 +36,27 @@ client = genai.Client(api_key=settings.gemini_api_key)
 
 @app.post("/api/add_image")
 def add_image(file: UploadFile = File(...)):
-    return {"filename": file.filename, "content_type": file.content_type}
+    # Open the uploaded file as an image
+    try:
+        image = Image.open(io.BytesIO(file.file.read()))
+        image.verify()  # Verify that it is, in fact, an image
+        image.save(image, format='JPEG')
+        img_bytes = image.getvalue()
+
+    except Exception as e:
+        return {"error": "Invalid image file", "details": str(e)}
+
+    # Process the image (e.g., convert to text or extract features)
+    result = client.models.embed_content(
+    model="gemini-embedding-exp-03-07",
+    contents={"image": img_bytes},
+    task_type="retrieval_document")
+    # Print the embedding vector (list of floats)
+    embedding_vector = result["embedding"]
+    print(f"Embedding vector length: {len(embedding_vector)}")
+    print(embedding_vector[:10])  # Show first few values
+
+    return {"filename": file.filename, "content_type": file.content_type, "embedding": result}
 
 
 @app.get("/image/{image_id}")
@@ -43,7 +65,6 @@ def get_image(image_id: str):
 
 @app.post("/api/query")
 async def query(text: str = Form(...), file: UploadFile = File(...)):
-    print(f'api key: {settings.gemini_api_key}')
     result = client.models.embed_content(
         model="gemini-embedding-exp-03-07",
         contents=text)
