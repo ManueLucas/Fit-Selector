@@ -3,6 +3,8 @@ from typing import Union, Annotated
 from fastapi import FastAPI, Depends
 from fastapi import File, UploadFile, Form
 from google import genai
+from google.genai import types
+
 # import os
 # from dotenv import load_dotenv
 # load_dotenv()
@@ -30,33 +32,28 @@ settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
 # Create a new client and connect to the server
 client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
 
-
 app = FastAPI()
 client = genai.Client(api_key=settings.gemini_api_key)
 
 @app.post("/api/add_image")
-def add_image(file: UploadFile = File(...)):
-    # Open the uploaded file as an image
+async def add_image(file: UploadFile = File(...)):
     try:
-        image = Image.open(io.BytesIO(file.file.read()))
-        image.verify()  # Verify that it is, in fact, an image
-        image.save(image, format='JPEG')
-        img_bytes = image.getvalue()
+        # Load image from uploaded file
+        image_data = await file.read()
+        image = Image.open(io.BytesIO(image_data)).convert("RGB")
 
+        # Create Gemini Part (multimodal input expects dict with MIME type)
     except Exception as e:
         return {"error": "Invalid image file", "details": str(e)}
 
-    # Process the image (e.g., convert to text or extract features)
-    result = client.models.embed_content(
-    model="gemini-embedding-exp-03-07",
-    contents={"image": img_bytes},
-    task_type="retrieval_document")
-    # Print the embedding vector (list of floats)
-    embedding_vector = result["embedding"]
-    print(f"Embedding vector length: {len(embedding_vector)}")
-    print(embedding_vector[:10])  # Show first few values
+    # Get the embedding from Gemini
+    response = client.models.embed_content(
+        model="models/embedding-001",
+        contents=str(image_data),
+    )
 
-    return {"filename": file.filename, "content_type": file.content_type, "embedding": result}
+    return {"embedding": response}
+
 
 @app.get("/image/{image_id}")
 def get_image(image_id: str, _: Annotated[str, Depends(authenticated_user)]):
