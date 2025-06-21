@@ -10,12 +10,12 @@ function App() {
     return (
         <>
             <header>
-              <SignedOut>
-                <SignInButton />
-              </SignedOut>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
+                <SignedOut>
+                    <SignInButton />
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
             </header>
             <h1 id="h1-name">Fit Selector</h1>
             <h2 id="h2-slogan">your fit. your way.</h2>
