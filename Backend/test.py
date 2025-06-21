@@ -32,7 +32,11 @@ settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
 
 # Create a new client and connect to the server
 mongo_client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
+
+# Create / connect to database
 mongo_db = mongo_client["my_database"]
+
+# Create / access the collection
 clothing = mongo_db["clothing"]
 
 
@@ -78,55 +82,19 @@ async def add_image(
         model="models/embedding-001",
         contents=image_bytestring,
     )
-        
+    print(reponse.embeddings)
+    
     new_record = {
         "user_id": userid,                  # UUID as string
         "image_id": get_next_image_id(),    # Sequential integer
         "image_base64": image_bytestring,   # Placeholder
         "product_type": product_type,           # e.g. Shirt, Pants
-        "embeddings": response.embeddings[0].values      # List of 1536 random floats
+        "embeddings": response            # List of 1536 random floats
     }
     clothing.insert_one(new_record)
 
 
     return {"embedding": response, "product_type": product_type}
-
-@app.get("/api/random_outfit/{product_type}")
-def random_outfit(product_type: str, userid: Annotated[str, Depends(authenticated_user)]):
-
-    filter_criteria = {
-        "product_type": product_type,
-        "user_id": userid
-    }
-
-    pipeline = [
-        {"$match": filter_criteria},
-        {"$sample": {"size": 1}}
-    ]
-
-    random_doc_cursor = clothing.aggregate(pipeline)
-    random_doc_list = list(random_doc_cursor)  # Convert cursor to a list
-
-
-    if random_doc_list:
-        return random_doc_list[0]['image_base64']
-
-    # if random_doc_list:
-    #     doc = random_doc_list[0]
-    #     # Convert ObjectId to string here!
-    #     doc['_id'] = str(doc['_id'])
-    #     return doc
-    # else:
-    #     return None # No document found matching criteria
-
-    # print(random_doc_list)
-    # random_doc = random_doc_list[0] if random_doc_list else None  # Get the first document or None
-
-    # return {"product_type": random_doc_list}
-        # print("Random document pulled using $sample:")
-        # pprint.pprint(random_doc)
-    # else:
-    #     print("No documents found in the collection.")
 
 
 @app.get("/image/{image_id}")
