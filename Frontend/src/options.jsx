@@ -1,40 +1,89 @@
-export default function () {
+
+import { useState } from "react";
+
+export default function Uploader() {
+    const [fileName, setFileName] = useState("");
+    const [showPopup, setShowPopup] = useState(false);
+    const [category, setCategory] = useState("");
+    const [inputtedImage, setInputtedImage] = useState("");
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFileName(file.name);
+            setInputtedImage(URL.createObjectURL(file));
+            setShowPopup(true);
+        }
+    };
+
+    const handleCategorySelect = (type) => {
+        setCategory(type);
+        setShowPopup(false);
+        console.log("User selected:", type);
+    };
+
     return (
         <>
-            <div id="slogan">
-                <h2>
-                    your <u>fit</u>. your way.
-                </h2>
+            <div id="div-all-inputs">
+                <label
+                    htmlFor="input-file"
+                    className="custom-file-label option"
+                >
+                    Add Image
+                </label>
+                <input
+                    type="file"
+                    id="input-file"
+                    className="hidden-file-input"
+                    onChange={handleFileChange}
+                />
+
+                <button className="option" id="button-generate">
+                    Generate Fit
+                </button>
+                <button className="option" id="button-random">
+                    I'm Feeling Adventurous
+                </button>
             </div>
 
-            <div id="div-all">
-                <div id="div-add" class="div-mini">
-                    <h3>
-                        Got a new <u>fit</u> to add to your collection? Add it
-                        now!
-                    </h3>
-                    <div id="add-buttons">
-                        <input type="image"/>
-                        <button>Add a Dress</button>
+            {showPopup && (
+                <div className="popup-overlay">
+                    <div className="popup">
+                        <p>Is this clothe image a:</p>
+                        <div className="popup-buttons">
+                            <button
+                                onClick={() => handleCategorySelect("Shirt")}
+                            >
+                                Shirt
+                            </button>
+                            <button
+                                onClick={() => handleCategorySelect("Trouser")}
+                            >
+                                Trouser
+                            </button>
+                            <button
+                                onClick={() => handleCategorySelect("Jacket")}
+                            >
+                                Jacket
+                            </button>
+                            <button
+                                onClick={() =>
+                                    handleCategorySelect("Accessory")
+                                }
+                            >
+                                Accessory
+                            </button>
+                        </div>
+                        {inputtedImage && (
+                            <img
+                                src={inputtedImage}
+                                alt="Uploaded Image Preview"
+                                className="popup-preview-image"
+                            />
+                        )}
                     </div>
                 </div>
-                <div id="div-preferences" class="div-mini">
-                    <h3>
-                        Got a preferred <u>fashion</u> style? Add it below!
-                    </h3>
-                    <div id="pref-buttons">
-                        <input
-                            type="text"
-                            placeholder="e.g. goth, modern"
-                        />
-                        <button>Submit Style Preference</button>
-                    </div>
-                </div>
-                <div id="div-generate" class="div-mini">
-                    <h3>Let's see what you got!</h3>
-                    <button>Generate Outfit</button>
-                </div>
-            </div>
+            )}
         </>
     );
 }
