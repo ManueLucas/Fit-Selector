@@ -1,13 +1,26 @@
+import ProtectedContent from "./ProtectedContent";
+import "./index.css";
 
-export default function() {
-    return(
+import {
+    SignedIn,
+    SignedOut,
+    SignInButton,
+    UserButton,
+} from "@clerk/clerk-react";
+export default function () {
+    return (
         <>
-                    <header>
-                        {/* <div id="div-header"> */}
-                            <h1>Fit Selector</h1>
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi8FPhqYOMcgQsVR-Os-W0CQLQNJAbbR8N6A&s" alt="Wardrobe" />
-                        {/* </div> */}
-                    </header>
+            <header>
+                <SignedOut>
+                    <SignInButton />
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                    <ProtectedContent />
+                </SignedIn>
+                <h1 id="h1-name">Fit Selector</h1>
+                <h2 id="h2-slogan">your fit. your way.</h2>
+            </header>
         </>
-    )
+    );
 }

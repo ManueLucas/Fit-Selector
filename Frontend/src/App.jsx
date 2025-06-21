@@ -1,14 +1,8 @@
 import { use, useState } from "react";
 import "./index.css";
-
-import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    UserButton,
-} from "@clerk/clerk-react";
-
-import ProtectedContent from "./ProtectedContent";
+import Header from "./header"
+import Prompt from "./prompt"
+import Options from "./options"
 
 function App() {
     const [fileName, setFileName] = useState("");
@@ -34,60 +28,9 @@ function App() {
 
     return (
         <>
-            <header>
-                <SignedOut>
-                    <SignInButton />
-                </SignedOut>
-                <SignedIn>
-                    <UserButton />
-                    <ProtectedContent />
-                </SignedIn>
-            </header>
-            <h1 id="h1-name">Fit Selector</h1>
-            <h2 id="h2-slogan">your fit. your way.</h2>
-
-            <h1 id="h1-question">
-                What kind of fit do you want to wear today?
-            </h1>
-            <div id="div-input">
-                <input
-                    type="text"
-                    placeholder="e.g. I want to look like Chris Hemsworth!"
-                    name=""
-                    id="input-fit"
-                />
-            </div>
-            <div id="div-all-inputs">
-                {/* Custom File Upload */}
-                <label
-                    htmlFor="input-file"
-                    className="custom-file-label option"
-                >
-                    Add Image
-                </label>
-                <input
-                    type="file"
-                    id="input-file"
-                    className="hidden-file-input"
-                    onChange={handleFileChange}
-                />
-
-                {/* Display filename */}
-                {fileName && (
-                    <span className="file-name-display">{fileName}</span>
-                )}
-
-                {/* Buttons */}
-                <button className="option" id="button-reset">
-                    Reset Preferences
-                </button>
-                <button className="option" id="button-generate">
-                    Generate Fit
-                </button>
-                <button className="option" id="button-random">
-                    I'm Feeling Adventurous
-                </button>
-            </div>
+            <Header/>
+            <Prompt/>
+            <Options/>
 
             {showPopup && (
                 <div className="popup-overlay">
@@ -114,9 +57,3 @@ function App() {
 }
 
 export default App;
-
-// <Header />
-
-// <main>
-//   <Options />
-// </main>
