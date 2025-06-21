@@ -1,7 +1,4 @@
-
-
-
-#div-header {
+/* #div-header {
   display: flex;
   justify-content: space-around;
 }
@@ -124,4 +121,65 @@ u {
   padding: 14px 12px;
   background: yellow;
   border-radius: 20%;
+} */
+
+body {
+  color: #222222;
+  font-family: "Montserrat", sans-serif;
+}
+
+#h1-name, #h1-question {
+  font-weight: 400;
+}
+
+#h2-slogan {
+  margin-top: 40px;
+  font-weight: 200;
+}
+
+#h1-question {
+  margin-top: 140px;
+  font-size: 1.8rem;
+}
+
+#h1-name, #h2-slogan, #h1-question {
+text-align: center;
+}
+
+#div-input {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#input-fit {
+  margin-top: 20px;
+  width: 700px;
+  height: 70px;
+border: 0.6px solid lightgray;
+border-radius: 20%;
+padding: 30px 30px;
+font-family: "Montserrat", sans-serif;
+font-weight: 300;
+font-size: 1.2rem;
+}
+
+#div-input-file {
+  border: 0.6px solid lightgray;
+  width: 170px;
+  border-radius: 20%;
+  padding: 14px 20px;
+  margin-top: 6px;
+  margin-left: 82px;
+}
+
+#button-reset, #button-generate {
+  background: white;
+  border: 0.6px solid lightgray;
+  font-family: "Montserrat", sans-serif;
+  padding: 10px 20px;
+  border-radius: 20%;
+  font-weight: 400;
+  font-size: 1rem;
 }
