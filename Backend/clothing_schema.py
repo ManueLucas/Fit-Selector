@@ -1,16 +1,21 @@
 from pymongo import MongoClient, ASCENDING
 import uuid
-import os
-from dotenv import load_dotenv
-load_dotenv()
+# import os
+# from dotenv import load_dotenv
+# load_dotenv()
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import random
 
-api_key = os.getenv("GEMINI_API_KEY")
-mongo_uri = os.getenv("MONGO_URI")
+import config
+
+# api_key = os.getenv("GEMINI_API_KEY")
+# mongo_uri = os.getenv("MONGO_URI")
+
+settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
+
 # Create a new client and connect to the server
-client = MongoClient(mongo_uri, server_api=ServerApi('1'))
+client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
 
 # Connect to MongoDB (adjust URI if remote)
 client = MongoClient(mongo_uri)
