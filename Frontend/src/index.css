@@ -158,28 +158,67 @@ text-align: center;
   width: 700px;
   height: 70px;
 border: 0.6px solid lightgray;
-border-radius: 20%;
+border-radius: 40px;
 padding: 30px 30px;
 font-family: "Montserrat", sans-serif;
 font-weight: 300;
 font-size: 1.2rem;
 }
 
-#div-input-file {
+#input-file {
   border: 0.6px solid lightgray;
-  width: 170px;
+  width: 214px;
   border-radius: 20%;
-  padding: 14px 20px;
-  margin-top: 6px;
-  margin-left: 82px;
+  padding: 24px 20px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
 }
 
-#button-reset, #button-generate {
+.hidden-file-input {
+  display: none; /* hides native input */
+}
+
+.custom-file-label {
+  display: inline-block;
+  background-color: white;
+  border: 0.6px solid lightgray;
+  color: #222222;
+  padding: 14px 24px;
+  border-radius: 30px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.custom-file-label:hover {
+  background-color: lightgray;
+}
+
+.option {
   background: white;
   border: 0.6px solid lightgray;
   font-family: "Montserrat", sans-serif;
-  padding: 10px 20px;
-  border-radius: 20%;
+  border-radius: 30px;
   font-weight: 400;
   font-size: 1rem;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+#button-reset, #button-generate {
+  padding: 10px;
+}
+
+
+#button-random {
+  padding: 10px;
+}
+
+#div-all-inputs {
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
 }

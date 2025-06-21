@@ -1,11 +1,14 @@
 import { useState } from "react";
 import "./index.css";
-import Header from "./header";
-import Options from "./options";
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+import {
+    SignedIn,
+    SignedOut,
+    SignInButton,
+    UserButton,
+} from "@clerk/clerk-react";
 
-import ProtectedContent from './ProtectedContent';
+import ProtectedContent from "./ProtectedContent";
 
 function App() {
     return (
@@ -33,11 +36,18 @@ function App() {
                     id="input-fit"
                 />
             </div>
-            <div id="div-input-file">
-                <input type="file" id="input-file" /> 
+            <div id="div-all-inputs">
+
+
+                {/* <input class="option" type="file" id="input-file" /> */}
+
+                <label for="input-file" class="custom-file-label">Choose File</label>
+                <input type="file" id="input-file" class="hidden-file-input" />
+
+                <button class="option" id="button-reset">Reset Preferences</button>
+                <button class="option" id="button-generate">Generate Fit</button>
+                <button class="option" id="button-random">I'm Feeling Adventurous</button>
             </div>
-                <button id="button-reset">Reset Preferences</button>
-                <button id="button-generate">Generate Fit</button>
         </>
     );
 }
