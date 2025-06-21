@@ -36,9 +36,8 @@ client = genai.Client(api_key=settings.gemini_api_key)
 def add_image(file: UploadFile = File(...)):
     return {"filename": file.filename, "content_type": file.content_type}
 
-
 @app.get("/image/{image_id}")
-def get_image(image_id: str):
+def get_image(image_id: str, _: Annotated[str, Depends(authenticated_user)]):
     return {"image_id": image_id}
 
 @app.post("/api/query")
@@ -55,11 +54,6 @@ async def query(text: str = Form(...), file: UploadFile = File(...)):
         "content_type": file.content_type,
         "message" : "Thanks for playing!"
     }
-
-
-@app.get("/image/{image_id}")
-def get_image(image_id: str, _: Annotated[str, Depends(authenticated_user)]):
-    return {"image_id": image_id}
 
 
 @app.get("/clerk_jwt/", response_model=UserResponse)
