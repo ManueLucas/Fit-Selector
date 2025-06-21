@@ -1,6 +1,6 @@
-from typing import Union
+from typing import Union, Annotated
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi import File, UploadFile, Form
 from google import genai
 import os
@@ -8,6 +8,17 @@ from dotenv import load_dotenv
 load_dotenv()
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+
+
+from auth import authenticated_user
+
+from pydantic import BaseModel
+
+
+class UserResponse(BaseModel):
+    userId: str
+
+
 
 api_key = os.getenv("GEMINI_API_KEY")
 mongo_uri = os.getenv("MONGO_URI")
@@ -23,7 +34,7 @@ def add_image(file: UploadFile = File(...)):
     return {"filename": file.filename, "content_type": file.content_type}
 
 
-@app.get("/api/{image_id}")
+@app.get("/image/{image_id}")
 def get_image(image_id: str):
     return {"image_id": image_id}
 
@@ -41,3 +52,13 @@ async def query(text: str = Form(...), file: UploadFile = File(...)):
         "content_type": file.content_type,
         "message" : "Thanks for playing!"
     }
+
+
+@app.get("/image/{image_id}")
+def get_image(image_id: str, _: Annotated[str, Depends(authenticated_user)]):
+    return {"image_id": image_id}
+
+
+@app.get("/clerk_jwt/", response_model=UserResponse)
+async def clerk_jwt(current_user: Annotated[str, Depends(authenticated_user)]):
+    return UserResponse(userId=current_user)
