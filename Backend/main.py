@@ -3,6 +3,7 @@ from typing import Union, Annotated
 from fastapi import FastAPI, Depends
 from fastapi import File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
+from pymongo import ReturnDocument
 
 from google import genai
 from google.genai import types
@@ -29,11 +30,9 @@ class UserResponse(BaseModel):
 
 settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
 
-# api_key = os.getenv("GEMINI_API_KEY")
-# mongo_uri = os.getenv("MONGO_URI")
 # Create a new client and connect to the server
 mongo_client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
-mongo_db = client["my_database"]
+mongo_db = mongo_client["my_database"]
 clothing = mongo_db["clothing"]
 
 
@@ -58,7 +57,12 @@ app.add_middleware(
 
 
 @app.post("/api/add_image")
-async def add_image(file: UploadFile = File(...)):
+async def add_image(
+    userid: Annotated[str, Depends(authenticated_user)], 
+    file: UploadFile = File(...), 
+    product_type: str = Form(...)
+):
+    print(userid)
     try:
         # Load image from uploaded file
         image_data = await file.read()
@@ -67,39 +71,50 @@ async def add_image(file: UploadFile = File(...)):
         # Create Gemini Part (multimodal input expects dict with MIME type)
     except Exception as e:
         return {"error": "Invalid image file", "details": str(e)}
-
+    
+    image_bytestring = str(image_data)
     # Get the embedding from Gemini
     response = client.models.embed_content(
         model="models/embedding-001",
-        contents=str(image_data),
+        contents=image_bytestring,
     )
+        
+    new_record = {
+        "user_id": userid,                  # UUID as string
+        "image_id": get_next_image_id(),    # Sequential integer
+        "image_base64": image_bytestring,   # Placeholder
+        "product_type": product_type,           # e.g. Shirt, Pants
+        "embeddings": response.embeddings[0].values      # List of 1536 random floats
+    }
+    clothing.insert_one(new_record)
 
-    return {"embedding": response}
+
+    return {"embedding": response, "product_type": product_type}
 
 @app.get("/api/random_outfit/{product_type}")
 def random_outfit(product_type: str, userid: Annotated[str, Depends(authenticated_user)]):
 
     filter_criteria = {
         "product_type": product_type,
-        user_id: userid
+        "user_id": userid
     }
 
     pipeline = [
         {"$match": filter_criteria},
         {"$sample": {"size": 1}}
     ]
-    
-    random_doc_cursor = my_collection.aggregate(pipeline)
-    
-    random_doc = next(random_doc_cursor, None) # Get the first (and only) document
-    
-    if random_doc:
-        return {category: random_doc}
+
+    random_doc_cursor = clothing.aggregate(pipeline)
+    random_doc_list = list(random_doc_cursor)  # Convert cursor to a list
+    print(random_doc_list)
+    # random_doc = random_doc_list[0] if random_doc_list else None  # Get the first document or None
+
+    return {"product_type": random_doc_list}
         # print("Random document pulled using $sample:")
         # pprint.pprint(random_doc)
-    else:
-        print("No documents found in the collection.")
-    # return {"random": []}
+    # else:
+    #     print("No documents found in the collection.")
+
 
 @app.get("/image/{image_id}")
 def get_image(image_id: str, _: Annotated[str, Depends(authenticated_user)]):
@@ -127,3 +142,14 @@ async def clerk_jwt(current_user: Annotated[str, Depends(authenticated_user)]):
 @app.get("/api/protected")
 def get_image(uid: Annotated[str, Depends(authenticated_user)]):
     return {"uid": uid}
+
+
+
+def get_next_image_id():
+    counter = mongo_db.counters.find_one_and_update(
+        {"_id": "image_id"},
+        {"$inc": {"sequence_value": 1}},
+        return_document=ReturnDocument.AFTER,
+        upsert=True  # Creates the document if it doesn't exist
+    )
+    return counter["sequence_value"]

@@ -17,24 +17,23 @@ settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
 # Create a new client and connect to the server
 client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
 
-# Connect to MongoDB (adjust URI if remote)
-client = MongoClient(mongo_uri)
-
 # Create / connect to database
 db = client["my_database"]
+
+db.counters.insert_one({"_id": "image_id", "sequence_value": 0})
 
 # Create / access the collection
 clothing = db["clothing"]
 
 # Optional: Drop existing collection if you want a clean slate
-# clothing.drop()
+clothing.drop()
 
 # Create indexes
 clothing.create_index([("user_id", ASCENDING)])
 clothing.create_index([("image_id", ASCENDING)], unique=True)
 clothing.create_index([("product_type", ASCENDING)])
 # Generate a list of 1536 random floats
-sample_embedding = [random.uniform(0, 1) for _ in range(1536)]
+sample_embedding = [random.uniform(0, 1) for _ in range(768)]
 
 # Insert a sample document
 sample_doc = {
