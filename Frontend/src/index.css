@@ -12,10 +12,11 @@ body {
 #h2-slogan {
   margin-top: 40px;
   font-weight: 200;
+  margin-bottom: 0;
 }
 
 #h1-question {
-  margin-top: 140px;
+  margin-top: 40px;
   font-size: 1.8rem;
 }
 
@@ -160,4 +161,10 @@ font-size: 1.2rem;
   height: auto;
   margin: 16px 0 ;
   border-radius: 12px;
+}
+
+.main-logo {
+  width:230px;
+display: block;
+margin: 0 auto;
 }
