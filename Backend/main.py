@@ -32,11 +32,7 @@ settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
 
 # Create a new client and connect to the server
 mongo_client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
-
-# Create / connect to database
 mongo_db = mongo_client["my_database"]
-
-# Create / access the collection
 clothing = mongo_db["clothing"]
 
 
