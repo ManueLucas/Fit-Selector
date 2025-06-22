@@ -20,7 +20,28 @@ export default function Uploader() {
         setCategory(type);
         setShowPopup(false);
         console.log("User selected:", type);
-    };
+        const inputFile = document.getElementById("input-file");
+        const formData = new FormData();
+        formData.append("file", inputFile.files[0]);  
+        formData.append("product_type", type);
+
+        const response = fetch(`http://localhost:8000/api/add_image/`, {
+            method: "POST",
+            mode: 'cors',
+            headers: {
+                Authorization: `Bearer ${token}`, // <-- Pass the JWT as a Bearer token
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorData = response.json();
+            throw new Error(
+            `HTTP error! status: ${response.status}, Detail: ${errorData.detail || "Unknown error"}`
+            );
+        }
+
+        };
 
     return (
         <>
