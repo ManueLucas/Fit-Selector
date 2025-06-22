@@ -40,7 +40,7 @@ clothing.create_search_index(
                 "fields": {
                     "embeddings": {
                         "type": "knnVector",
-                        "dimensions": 1536,
+                        "dimensions": 3072,
                         "similarity": "dotProduct"
                     }
                 }
@@ -50,7 +50,7 @@ clothing.create_search_index(
     }
 )
 # Generate a list of 1536 random floats
-sample_embedding = [random.uniform(0, 1) for _ in range(768)]
+sample_embedding = [random.uniform(0, 1) for _ in range(3072)]
 
 # Insert a sample document
 sample_doc = {

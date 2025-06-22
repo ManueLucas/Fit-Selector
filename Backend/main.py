@@ -23,7 +23,6 @@ import config
 from PIL import Image
 import io
 
-
 class UserResponse(BaseModel):
     userId: str
     
@@ -37,6 +36,20 @@ mongo_client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
 mongo_db = mongo_client["my_database"]
 clothing = mongo_db["clothing"]
 
+
+def query_results(query, k):
+  results = clothing.aggregate([
+    {
+        '$vectorSearch': {
+            "index": "embedding_vector_index",
+            "path": "embeddings",
+            "queryVector": generate_embedding(query),
+            "numCandidates": 50,
+            "limit": k,
+        }
+    }
+    ])
+  return results
 
 app = FastAPI()
 client = genai.Client(api_key=settings.gemini_api_key)
@@ -83,7 +96,7 @@ async def add_image(
         "image_id": get_next_image_id(),    # Sequential integer
         "image_base64": image_bytestring,   # Placeholder
         "product_type": product_type,           # e.g. Shirt, Pants
-        "embeddings": response.embeddings[0].values      # List of 1536 random floats
+        "embeddings": response     # List of 1536 random floats
     }
     clothing.insert_one(new_record)
 
@@ -127,40 +140,147 @@ def random_outfit(product_type: str, userid: Annotated[str, Depends(authenticate
     # else:
     #     print("No documents found in the collection.")
 
-
+@app.post("/api/search")
+def search(_: Annotated[str, Depends(authenticated_user)], query: str = Form(...)):
+    results = query_results(query, 3)
+    return {"results": [str(result) for result in results]}
+    
+    
+    
 @app.get("/image/{image_id}")
-def get_image(image_id: str, _: Annotated[str, Depends(authenticated_user)]):
-    return {"image_id": image_id}
+def get_image(image_id: str, userid: Annotated[str, Depends(authenticated_user)]):
+
+    filter_criteria = {
+        "image_id": image_id,
+        "user_id": userid
+    }
+
+    pipeline = [
+        {"$match": filter_criteria}
+    ]
+
+    random_doc_cursor = clothing.aggregate(pipeline)
+    random_doc_list = list(random_doc_cursor)  # Convert cursor to a list
+
+
+    if random_doc_list:
+        return random_doc_list[0]['image_base64']
+
+
+    # return {"image_id": image_id}
+
+
+def get_shirts(style_description: str) -> dict:
+    """Get the shirts in the wardrobe that most closely fit the description given.
+
+    Args:
+        style_description: A brief description of the style of shirt we want for the outfit.
+
+    Returns:
+        A list containing the ids of the top 3 matches in the wardrobe.
+    """
+
+    return [1, 2, 3] # TODO: Search vector database
+
+def get_pants(style_description: str) -> dict:
+    """Get the pants in the wardrobe that most closely fit the description given.
+
+    Args:
+        style_description: A brief description of the style of pants we want for the outfit.
+
+    Returns:
+        A list containing the ids of the top 3 matches in the wardrobe.
+    """
+
+    return [4, 5, 6] # TODO: Search vector database
+
+def get_shoes(style_description: str) -> dict:
+    """Get the shoes in the wardrobe that most closely fit the description given.
+
+    Args:
+        style_description: A brief description of the style of shoes we want for the outfit.
+
+    Returns:
+        A list containing the ids of the top 3 matches in the wardrobe.
+    """
+
+    return [7, 8, 9] # TODO: Search vector database
+
+def get_accessories(style_description: str) -> dict:
+    """Get the accessories in the wardrobe that most closely fit the description given.
+
+    Args:
+        style_description: A brief description of the style of accessory we want for the outfit.
+
+    Returns:
+        A list containing the ids of the top 3 matches in the wardrobe.
+    """
+    # ... (implementation) ...
+
+    return [10, 11, 12] # TODO: Search vector database
+
+def get_jackets(style_description: str) -> dict:
+    """Get the jackets in the wardrobe that most closely fit the description given.
+
+    Args:
+        style_description: A brief description of the style of jacket we want for the outfit.
+
+    Returns:
+        A list containing the ids of the top 3 matches in the wardrobe.
+    """
+    # ... (implementation) ...
+
+    return [13, 14, 15] # TODO: Search vector database
+
 
 @app.post("/api/query")
-async def query(text: str = Form(...)):
-    result = search_by_relevant_article(text, product_type="Accessory")
-    return result
-    
-async def search_by_relevant_article(model_thought_and_prompt: str, product_type: str):
-    
-    result = query_results(model_thought_and_prompt)
-    return result
-    
+def query(userid: Annotated[str, Depends(authenticated_user)], text: str = Form(...)):
 
-def query_results(query, k=1):
-  results = clothing.aggregate([
-    {
-        '$vectorSearch': {
-            "index": "embedding_vector_index",
-            "path": "embeddings",
-            "queryVector": generate_embedding(query),
-            "numCandidates": 50,
-            "limit": k,
-        }
-    }
-    ])
-  return results
+    config = types.GenerateContentConfig(
+        tools=[get_shirts, get_pants, get_shoes, get_accessories, get_jackets]
+    )  # Pass the function itself
 
-def generate_embedding(query):
-    return client.models.embed_content(
-        model="gemini-embedding-exp-03-07",
-        contents=query)
+    # Make the request
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=text,
+        config=config,
+    )
+
+    return response.text
+
+    # response = model.generate_content(
+    #     contents = [
+    #       Content(
+    #         role="user",
+    #           parts=[
+    #               Part.from_text(text),
+    #           ],
+    #       )
+    #     ],
+    #     generation_config = GenerationConfig(temperature=0),
+    #     tools = [
+    #       Tool(
+    #         function_declarations=[get_shirts, get_pants, get_shoes, get_accessories, get_jackets],
+    #       )
+    #     ]
+    # )
+
+
+# @app.post("/api/query")
+# async def query(text: str = Form(...), file: UploadFile = File(...)):
+#     result = client.models.embed_content(
+#         model="gemini-embedding-exp-03-07",
+#         contents=text)
+
+#     return {
+#         "question": text,
+#         "answer": result,
+#         "filename": file.filename,
+#         "content_type": file.content_type,
+#         "message" : "Thanks for playing!"
+#     }
+
 
 @app.get("/clerk_jwt/", response_model=UserResponse)
 async def clerk_jwt(current_user: Annotated[str, Depends(authenticated_user)]):
@@ -170,7 +290,10 @@ async def clerk_jwt(current_user: Annotated[str, Depends(authenticated_user)]):
 def get_image(uid: Annotated[str, Depends(authenticated_user)]):
     return {"uid": uid}
 
-
+def generate_embedding(query):
+    return client.models.embed_content(
+        model="gemini-embedding-exp-03-07",
+        contents=query).embeddings[0].values 
 
 def get_next_image_id():
     counter = mongo_db.counters.find_one_and_update(
