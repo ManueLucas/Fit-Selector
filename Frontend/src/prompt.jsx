@@ -1,7 +1,7 @@
 import { useState } from "react";
 import OutfitViewer from './OutfitViewer';
 
-export default function Prompt({ activeMode }) {
+export default function Prompt({ activeMode, inputValue, onInputChange }) {
     const [showOutfit, setShowOutfit] = useState(false);
     const [outfitIds, setOutfitIds] = useState({
         shirt: "123",
@@ -20,6 +20,8 @@ export default function Prompt({ activeMode }) {
                     placeholder="e.g. I want to look like Chris Hemsworth!"
                     name=""
                     id="input-fit"
+                    value={inputValue}
+                    onChange={(e) => onInputChange(e.target.value)}
                 />
                 {activeMode === "generate" && (
                     <div id="generate-button-div">
