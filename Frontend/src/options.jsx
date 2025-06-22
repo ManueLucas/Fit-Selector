@@ -73,6 +73,13 @@ export default function Uploader() {
                             >
                                 Accessory
                             </button>
+                            <button
+                                onClick={() =>
+                                    handleCategorySelect("Shoes")
+                                }
+                            >
+                                Shoes
+                            </button>
                         </div>
                         {inputtedImage && (
                             <img

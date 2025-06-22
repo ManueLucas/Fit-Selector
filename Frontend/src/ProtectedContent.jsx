@@ -29,7 +29,7 @@ function ProtectedContent() {
 
       console.log("Attempting to fetch protected data with token...");
 
-      const response = await fetch("http://localhost:8000/api/protected/", {
+      const response = await fetch("http://localhost:8000/api/random_outfit/Shirt", {
         method: "GET",
         mode: 'cors',
         headers: {

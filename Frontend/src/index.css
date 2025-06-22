@@ -34,13 +34,13 @@ text-align: center;
 #input-fit {
   margin-top: 20px;
   width: 700px;
-  height: 70px;
-border: 0.6px solid lightgray;
-border-radius: 40px;
-padding: 30px 30px;
-font-family: "Montserrat", sans-serif;
-font-weight: 300;
-font-size: 1.2rem;
+  height: 30px;
+  border: 0.6px solid lightgray;
+  border-radius: 25px;
+  padding: 30px 30px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 300;
+  font-size: 1.2rem;
 }
 
 #input-file {
@@ -167,4 +167,10 @@ font-size: 1.2rem;
   width:230px;
 display: block;
 margin: 0 auto;
+}
+
+#login-section {
+  position: absolute;
+  right: 22px;
+/*  float: right;*/
 }
