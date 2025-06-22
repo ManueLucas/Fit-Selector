@@ -48,18 +48,12 @@ function App() {
             }
 
             const inventoryData = await response.json();
-            console.log("User inventory:", inventoryData);
 
             // Update the uploadedClothes state with the fetched inventory
             // You might need to adjust this based on your backend response structure
             if (inventoryData) {
                 const processedInventory = inventoryData.map(record => {
                     let imageUrl;
-
-                    // Debug: log the first part of the image data to see its format
-                    console.log('Image data type:', typeof record.image_base64);
-                    console.log('Image data preview:', record.image_base64.substring(0, 50) + '...');
-                    console.log('Image data length:', record.image_base64.length);
 
                     try {
                         // Check if the data is already a data URL
@@ -88,9 +82,6 @@ function App() {
                         id: record.id // if your backend provides an id
                     };
                 });
-
-                console.log('Processed inventory items:', processedInventory.length);
-                console.log('First processed item:', processedInventory[0]);
 
                 setUploadedClothes(processedInventory);
             }
