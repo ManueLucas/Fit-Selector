@@ -1,9 +1,9 @@
 export default function () {
     return (
         <>
-            <h1 id="h1-question">
+           {/* <h1 id="h1-question">
                 What kind of fit do you want to wear today?
-            </h1>
+            </h1>*/}
             <div id="div-input">
                 <input
                     type="text"

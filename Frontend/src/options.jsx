@@ -1,48 +1,9 @@
-
-import { useState } from "react";
-
-export default function Uploader() {
-    const [fileName, setFileName] = useState("");
-    const [showPopup, setShowPopup] = useState(false);
-    const [category, setCategory] = useState("");
-    const [inputtedImage, setInputtedImage] = useState("");
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFileName(file.name);
-            setInputtedImage(URL.createObjectURL(file));
-            setShowPopup(true);
-        }
-    };
-
-    const handleCategorySelect = (type) => {
-        setCategory(type);
-        setShowPopup(false);
-        console.log("User selected:", type);
-        const inputFile = document.getElementById("input-file");
-        const formData = new FormData();
-        formData.append("file", inputFile.files[0]);  
-        formData.append("product_type", type);
-
-        const response = fetch(`http://localhost:8000/api/add_image/`, {
-            method: "POST",
-            mode: 'cors',
-            headers: {
-                Authorization: `Bearer ${token}`, // <-- Pass the JWT as a Bearer token
-            },
-            body: formData
-        });
-
-        if (!response.ok) {
-            const errorData = response.json();
-            throw new Error(
-            `HTTP error! status: ${response.status}, Detail: ${errorData.detail || "Unknown error"}`
-            );
-        }
-
-        };
-
+export default function Options({
+    handleFileChange,
+    showPopup,
+    inputtedImage,
+    handleCategorySelect,
+}) {
     return (
         <>
             <div id="div-all-inputs">
@@ -93,6 +54,11 @@ export default function Uploader() {
                                 }
                             >
                                 Accessory
+                            </button>
+                            <button
+                                onClick={() => handleCategorySelect("Shoes")}
+                            >
+                                Shoes
                             </button>
                         </div>
                         {inputtedImage && (
