@@ -194,6 +194,20 @@ def get_shirts(style_description: str) -> dict:
         A list containing the ids of the top 3 matches in the wardrobe.
     """
 
+    # results = clothing.aggregate([
+    #     {'$vectorSearch': {
+    #         "index": "embedding_vector_index",
+    #         "path": "embeddings",
+    #         "queryVector": generate_embedding(query),
+    #         "numCandidates": 50,
+    #         "limit": k,
+    #         "filter": {"user_id": userid}
+    #     }},
+    #     {"$project": {"_id": 0}}
+    # ])
+    
+    # return results
+
     return [1, 2, 3] # TODO: Search vector database
 
 def get_pants(style_description: str) -> dict:
@@ -245,6 +259,7 @@ def get_jackets(style_description: str) -> dict:
     # ... (implementation) ...
 
     return [13, 14, 15] # TODO: Search vector database
+
 
 
 @app.post("/api/query")

@@ -26,6 +26,7 @@ const Selector = ({ activeMode, onModeChange, onRandomize }) => {
                         activeMode === "generate" ? "active" : ""
                     }`}
                     onClick={() => handleModeChange("generate")}
+                    disabled="True"
                 >
                     Generate
                 </button>

@@ -17,7 +17,8 @@ export default function Prompt({ activeMode, inputValue, onInputChange }) {
             <div id="div-input">
                 <input
                     type="text"
-                    placeholder="e.g. I want to look like Chris Hemsworth!"
+                    // placeholder="e.g. I want to look like Chris Hemsworth!"
+                    placeholder="Search your wardrobe!   e.g. purple and green dress shirt"
                     name=""
                     id="input-fit"
                     value={inputValue}
