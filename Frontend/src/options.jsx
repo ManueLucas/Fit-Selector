@@ -1,27 +1,9 @@
-
-import { useState } from "react";
-
-export default function Uploader() {
-    const [fileName, setFileName] = useState("");
-    const [showPopup, setShowPopup] = useState(false);
-    const [category, setCategory] = useState("");
-    const [inputtedImage, setInputtedImage] = useState("");
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFileName(file.name);
-            setInputtedImage(URL.createObjectURL(file));
-            setShowPopup(true);
-        }
-    };
-
-    const handleCategorySelect = (type) => {
-        setCategory(type);
-        setShowPopup(false);
-        console.log("User selected:", type);
-    };
-
+export default function Options({
+    handleFileChange,
+    showPopup,
+    inputtedImage,
+    handleCategorySelect,
+}) {
     return (
         <>
             <div id="div-all-inputs">
@@ -74,9 +56,7 @@ export default function Uploader() {
                                 Accessory
                             </button>
                             <button
-                                onClick={() =>
-                                    handleCategorySelect("Shoes")
-                                }
+                                onClick={() => handleCategorySelect("Shoes")}
                             >
                                 Shoes
                             </button>
