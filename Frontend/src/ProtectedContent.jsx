@@ -28,14 +28,54 @@ function ProtectedContent() {
       }
 
       console.log("Attempting to fetch protected data with token...");
+      // const inputFile = document.getElementById("input-file");
+      // if (!inputFile || !inputFile.files || inputFile.files.length === 0) {
+      //   setError("No file selected. Please choose a file to upload.");
+      //   setLoading(false);
+      //   return;
+      // }
 
-      const response = await fetch("http://localhost:8000/api/random_outfit/Shirt", {
-        method: "GET",
+      // testing search
+      const search_body = new FormData();
+      search_body.append("query", "give me sunglasses")
+      const searchtest = await fetch("http://localhost:8000/api/search", {
+        method: "POST",
         mode: 'cors',
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`, // <-- Pass the JWT as a Bearer token
         },
+        body: search_body
+      });
+
+      const searchResponse = await searchtest.json();
+      console.log("Search response:", searchResponse);
+
+      if (searchResponse.image_base64) {
+        const imageElement = document.createElement("img");
+        imageElement.src = `data:image/png;base64,${searchResponse.image_base64}`;
+        imageElement.alt = "Search Result";
+        document.body.appendChild(imageElement); // Append the image to the body or a specific container
+      }
+      
+      const inputFile = document.getElementById("input-file");
+      if (!inputFile || !inputFile.files || inputFile.files.length === 0) {
+        setError("No file selected. Please choose a file to upload.");
+        setLoading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", inputFile.files[0]);
+      formData.append("product_type", "Bottom");
+
+
+      const response = await fetch("http://localhost:8000/api/add_image", {
+        method: "POST",
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${token}`, // <-- Pass the JWT as a Bearer token
+        },
+        body: formData
       });
 
       if (!response.ok) {

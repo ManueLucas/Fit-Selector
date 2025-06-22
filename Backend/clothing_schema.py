@@ -20,7 +20,7 @@ client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
 # Create / connect to database
 db = client["my_database"]
 
-db.counters.insert_one({"_id": "image_id", "sequence_value": 0})
+db.counters.update_one({"_id": "image_id"}, {"$set": {"sequence_value": 0}}, upsert=True)
 
 # Create / access the collection
 clothing = db["clothing"]
@@ -32,8 +32,25 @@ clothing.drop()
 clothing.create_index([("user_id", ASCENDING)])
 clothing.create_index([("image_id", ASCENDING)], unique=True)
 clothing.create_index([("product_type", ASCENDING)])
+clothing.create_search_index(
+    {
+        "definition": {
+            "mappings": {
+                "dynamic": True,
+                "fields": {
+                    "embeddings": {
+                        "type": "knnVector",
+                        "dimensions": 3072,
+                        "similarity": "dotProduct"
+                    }
+                }
+            }
+        },
+        "name": "embedding_vector_index"
+    }
+)
 # Generate a list of 1536 random floats
-sample_embedding = [random.uniform(0, 1) for _ in range(768)]
+sample_embedding = [random.uniform(0, 1) for _ in range(3072)]
 
 # Insert a sample document
 sample_doc = {

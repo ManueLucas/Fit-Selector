@@ -25,6 +25,8 @@ import io
 
 class UserResponse(BaseModel):
     userId: str
+    
+productTypes = ["Shirt", "Trouser", "Jacket", "Accessory", "Shoes"]
 
 
 settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
@@ -34,6 +36,20 @@ mongo_client = MongoClient(settings.mongo_uri, server_api=ServerApi('1'))
 mongo_db = mongo_client["my_database"]
 clothing = mongo_db["clothing"]
 
+
+def query_results(query, k):
+  results = clothing.aggregate([
+    {
+        '$vectorSearch': {
+            "index": "embedding_vector_index",
+            "path": "embeddings",
+            "queryVector": generate_embedding(query),
+            "numCandidates": 50,
+            "limit": k,
+        }
+    }
+    ])
+  return results
 
 app = FastAPI()
 client = genai.Client(api_key=settings.gemini_api_key)
@@ -73,17 +89,14 @@ async def add_image(
     
     image_bytestring = str(image_data)
     # Get the embedding from Gemini
-    response = client.models.embed_content(
-        model="models/embedding-001",
-        contents=image_bytestring,
-    )
+    response = generate_embedding(image_bytestring)
         
     new_record = {
         "user_id": userid,                  # UUID as string
         "image_id": get_next_image_id(),    # Sequential integer
         "image_base64": image_bytestring,   # Placeholder
         "product_type": product_type,           # e.g. Shirt, Pants
-        "embeddings": response.embeddings[0].values      # List of 1536 random floats
+        "embeddings": response     # List of 1536 random floats
     }
     clothing.insert_one(new_record)
 
@@ -127,7 +140,13 @@ def random_outfit(product_type: str, userid: Annotated[str, Depends(authenticate
     # else:
     #     print("No documents found in the collection.")
 
-
+@app.post("/api/search")
+def search(_: Annotated[str, Depends(authenticated_user)], query: str = Form(...)):
+    results = query_results(query, 3)
+    return {"results": [str(result) for result in results]}
+    
+    
+    
 @app.get("/image/{image_id}")
 def get_image(image_id: str, userid: Annotated[str, Depends(authenticated_user)]):
 
@@ -271,7 +290,10 @@ async def clerk_jwt(current_user: Annotated[str, Depends(authenticated_user)]):
 def get_image(uid: Annotated[str, Depends(authenticated_user)]):
     return {"uid": uid}
 
-
+def generate_embedding(query):
+    return client.models.embed_content(
+        model="gemini-embedding-exp-03-07",
+        contents=query).embeddings[0].values 
 
 def get_next_image_id():
     counter = mongo_db.counters.find_one_and_update(
