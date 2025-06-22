@@ -45,7 +45,7 @@ export default function Options({
                 throw new Error(`Failed to fetch random ${productType}`);
             }
 
-            const imageBase64 = await response.text();
+            const imageBase64 = await response.json();
             return imageBase64;
         } catch (err) {
             console.error(`Error fetching random ${productType}:`, err);
