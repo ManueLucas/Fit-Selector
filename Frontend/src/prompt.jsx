@@ -11,6 +11,13 @@ export default function () {
                     name=""
                     id="input-fit"
                 />
+                <div id="generate-button-div">
+                    
+                    <button id="generate-button">
+                        Generate
+                    </button>
+
+                </div>
             </div>
         </>
     );
