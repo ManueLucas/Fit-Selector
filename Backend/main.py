@@ -26,6 +26,8 @@ import io
 
 class UserResponse(BaseModel):
     userId: str
+    
+productTypes = ["Shirt", "Trouser", "Jacket", "Accessory", "Shoes"]
 
 
 settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')
@@ -74,10 +76,7 @@ async def add_image(
     
     image_bytestring = str(image_data)
     # Get the embedding from Gemini
-    response = client.models.embed_content(
-        model="models/embedding-001",
-        contents=image_bytestring,
-    )
+    response = generate_embedding(image_bytestring)
         
     new_record = {
         "user_id": userid,                  # UUID as string
@@ -134,19 +133,34 @@ def get_image(image_id: str, _: Annotated[str, Depends(authenticated_user)]):
     return {"image_id": image_id}
 
 @app.post("/api/query")
-async def query(text: str = Form(...), file: UploadFile = File(...)):
-    result = client.models.embed_content(
-        model="gemini-embedding-exp-03-07",
-        contents=text)
+async def query(text: str = Form(...)):
+    result = search_by_relevant_article(text, product_type="Accessory")
+    return result
+    
+async def search_by_relevant_article(model_thought_and_prompt: str, product_type: str):
+    
+    result = query_results(model_thought_and_prompt)
+    return result
+    
 
-    return {
-        "question": text,
-        "answer": result,
-        "filename": file.filename,
-        "content_type": file.content_type,
-        "message" : "Thanks for playing!"
+def query_results(query, k=1):
+  results = clothing.aggregate([
+    {
+        '$vectorSearch': {
+            "index": "embedding_vector_index",
+            "path": "embeddings",
+            "queryVector": generate_embedding(query),
+            "numCandidates": 50,
+            "limit": k,
+        }
     }
+    ])
+  return results
 
+def generate_embedding(query):
+    return client.models.embed_content(
+        model="gemini-embedding-exp-03-07",
+        contents=query)
 
 @app.get("/clerk_jwt/", response_model=UserResponse)
 async def clerk_jwt(current_user: Annotated[str, Depends(authenticated_user)]):
