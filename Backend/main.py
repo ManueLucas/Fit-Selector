@@ -28,7 +28,7 @@ import base64
 class UserResponse(BaseModel):
     userId: str
     
-productTypes = ["Shirt", "Trouser", "Jacket", "Accessory", "Shoes"]
+productTypes = ["Shirt", "Pants", "Jacket", "Accessory", "Shoes"]
 
 
 settings = config.Settings(_env_file='.env', _env_file_encoding='utf-8')

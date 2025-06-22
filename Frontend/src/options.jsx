@@ -124,9 +124,9 @@ export default function Options({
                                 Shirt
                             </button>
                             <button
-                                onClick={() => handleCategorySelect("Trouser")}
+                                onClick={() => handleCategorySelect("Pants")}
                             >
-                                Trouser
+                                Pants
                             </button>
                             <button
                                 onClick={() => handleCategorySelect("Jacket")}
