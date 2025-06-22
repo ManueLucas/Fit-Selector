@@ -1,9 +1,21 @@
+import Selector from './selector';
+
 export default function Options({
     handleFileChange,
     showPopup,
     inputtedImage,
     handleCategorySelect,
 }) {
+
+    const handleModeChange = (mode) => {
+        console.log('Mode changed to:', mode);
+        // Handle the mode change logic here
+    };
+
+    const handleRandomize = () => {
+        console.log('Dice button clicked!');
+        // Handle the randomize action here
+    };
     return (
         <>
             <div id="div-all-inputs">
@@ -20,12 +32,18 @@ export default function Options({
                     onChange={handleFileChange}
                 />
 
-                <button className="option" id="button-generate">
+                <Selector
+                    onModeChange={handleModeChange}
+                    onRandomize={handleRandomize}
+                />
+
+
+                {/*<button className="option" id="button-generate">
                     Generate Fit
                 </button>
                 <button className="option" id="button-random">
                     I'm Feeling Adventurous
-                </button>
+                </button>*/}
             </div>
 
             {showPopup && (
