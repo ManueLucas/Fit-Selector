@@ -1,0 +1,234 @@
+.outfit-viewer {
+  width: 90%;
+  max-width: 600px;
+  height: 500px;
+  max-height: 80vh;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.outfit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 10px;
+  height: 400px;
+  max-height: calc(80vh - 100px);
+  margin-top: 20px;
+}
+
+.outfit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 80px;
+}
+
+.outfit-image {
+  max-width: 100%;
+  max-height: 80%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+}
+
+.item-label {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Grid positioning */
+.shirt-position {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.jacket-position {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.pants-position {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.accessories-position {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.shoes-position {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .outfit-viewer {
+    width: 95%;
+    height: auto;
+    max-height: 90vh;
+  }
+  
+  .outfit-grid {
+    gap: 5px;
+    height: auto;
+    min-height: 300px;
+  }
+  
+  .outfit-item {
+    padding: 5px;
+    min-height: 60px;
+  }
+  
+  .placeholder {
+    width: 60px;
+    height: 60px;
+    font-size: 10px;
+  }
+  
+  .item-label {
+    font-size: 10px;
+  }
+}
+
+/*.outfit-viewer {
+  width: 600px;
+  height: 500px;
+  position: absolute;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.outfit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 10px;
+  height: 400px;
+  margin-top: 20px;
+}
+
+.outfit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.outfit-image {
+  max-width: 100%;
+  max-height: 80%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+}
+
+.item-label {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Grid positioning */
+.shirt-position {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.jacket-position {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.pants-position {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.accessories-position {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.shoes-position {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin: 10px 0;
+}*/
