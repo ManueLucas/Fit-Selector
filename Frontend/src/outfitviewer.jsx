@@ -49,7 +49,10 @@ function OutfitViewer({
         throw new Error(`Failed to fetch ${imageType} image`);
       }
 
-      const imageBase64 = await response.text();
+      // const imageBase64 = await response.text();
+      const imageBase64 = await response.json();
+      console.log("test")
+      console.log(imageBase64)
       return imageBase64;
     } catch (err) {
       console.error(`Error fetching ${imageType} image:`, err);
@@ -116,6 +119,7 @@ function OutfitViewer({
         jacket: jacketImage || null,
         accessories: accessoriesImage || null,
       });
+      console.log(shoesImage)
       return;
     }
 
