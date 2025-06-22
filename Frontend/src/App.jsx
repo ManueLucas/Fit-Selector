@@ -48,11 +48,16 @@ function App() {
             {uploadedClothes.length > 0 && (
                 <div className="clothes-grid">
                     {uploadedClothes.map((item, idx) => (
-                        <Card
-                            key={idx}
-                            imageSrc={item.image}
-                            category={item.category}
-                        />
+                      <>
+                        <div class="div-card">
+                          <Card
+                              key={idx}
+                              imageSrc={item.image}
+                              category={item.category}
+                          />
+                          <button class="delete">Delete</button>
+                        </div>
+                        </>
                     ))}
                 </div>
             )}
