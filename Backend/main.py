@@ -39,20 +39,20 @@ mongo_db = mongo_client["my_database"]
 clothing = mongo_db["clothing"]
 
 
-def query_results(query, k):
-  results = clothing.aggregate([
-    {
-        '$vectorSearch': {
+def query_results(query, k, userid):
+    results = clothing.aggregate([
+        {'$vectorSearch': {
             "index": "embedding_vector_index",
             "path": "embeddings",
             "queryVector": generate_embedding(query),
             "numCandidates": 50,
             "limit": k,
-        }
-    }
+            "filter": {"user_id": userid}
+        }},
+        {"$project": {"_id": 0}}
     ])
-  return results
-
+    
+    return results
 app = FastAPI()
 client = genai.Client(api_key=settings.gemini_api_key)
 
@@ -155,9 +155,9 @@ def random_outfit(product_type: str, userid: Annotated[str, Depends(authenticate
     #     print("No documents found in the collection.")
 
 @app.post("/api/search")
-def search(_: Annotated[str, Depends(authenticated_user)], query: str = Form(...)):
-    results = query_results(query, 3)
-    return {"results": [str(result) for result in results]}
+def search(userid: Annotated[str, Depends(authenticated_user)], query: str = Form(...)):
+    results = query_results(query, 5, userid)
+    return list(results)
     
     
     
