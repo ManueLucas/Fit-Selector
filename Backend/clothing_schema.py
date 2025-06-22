@@ -49,18 +49,17 @@ clothing.create_search_index(
         "name": "embedding_vector_index"
     }
 )
-# Generate a list of 1536 random floats
 sample_embedding = [random.uniform(0, 1) for _ in range(3072)]
 
 # Insert a sample document
-sample_doc = {
-    "user_id": str(uuid.uuid4()),                  # UUID as string
-    "image_id": 1,                                 # Sequential integer
-    "image_base64": "base64-encoded-image-string", # Placeholder
-    "product_type": "Shirt",                       # e.g. Shirt, Pants
-    "embeddings": sample_embedding                 # List of 1536 random floats
-}
+# sample_doc = {
+#     "user_id": str(uuid.uuid4()),                  # UUID as string
+#     "image_id": 1,                                 # Sequential integer
+#     "image_base64": "base64-encoded-image-string", # Placeholder
+#     "product_type": "Shirt",                       # e.g. Shirt, Pants
+#     "embeddings": sample_embedding                 # List of 1536 random floats
+# }
 
-clothing.insert_one(sample_doc)
+# clothing.insert_one(sample_doc)
 
-print("Initialized clothing collection and inserted sample document.")
+print("Initialized clothing collection.")

@@ -23,6 +23,8 @@ import config
 from PIL import Image
 import io
 
+import base64
+
 class UserResponse(BaseModel):
     userId: str
     
@@ -88,13 +90,14 @@ async def add_image(
         return {"error": "Invalid image file", "details": str(e)}
     
     image_bytestring = str(image_data)
+    image_base64 = base64.b64encode(image_data).decode('utf-8')
     # Get the embedding from Gemini
     response = generate_embedding(image_bytestring)
         
     new_record = {
         "user_id": userid,                  # UUID as string
         "image_id": get_next_image_id(),    # Sequential integer
-        "image_base64": image_bytestring,   # Placeholder
+        "image_base64": image_base64,   # Placeholder
         "product_type": product_type,           # e.g. Shirt, Pants
         "embeddings": response     # List of 1536 random floats
     }
@@ -103,6 +106,17 @@ async def add_image(
 
     return {"embedding": response, "product_type": product_type}
 
+
+@app.get("/api/get_inventory")
+def get_inventory(userid: Annotated[str, Depends(authenticated_user)]):
+    results = clothing.find(
+        {"user_id": userid},
+        {"_id": 0, "image_id": 1, "image_base64": 1, "product_type": 1}
+    )
+
+    return list(results)
+    
+    
 @app.get("/api/random_outfit/{product_type}")
 def random_outfit(product_type: str, userid: Annotated[str, Depends(authenticated_user)]):
 

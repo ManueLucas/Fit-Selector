@@ -9,6 +9,7 @@ function ProtectedContent() {
   const [loading, setLoading] = useState(false);
 
   const fetchProtectedData = async () => {
+    console.log("bruh")
     if (!isSignedIn || !isLoaded) {
       console.log("Clerk not loaded or user not signed in. Cannot fetch data.");
       return;

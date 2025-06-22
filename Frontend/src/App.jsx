@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import "./index.css";
 import Header from "./header";
@@ -15,6 +15,97 @@ function App() {
     const [inputtedImage, setInputtedImage] = useState("");
     const [uploadedClothes, setUploadedClothes] = useState([]);
     const [pendingFile, setPendingFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    // Fetch user's inventory on component load
+    const fetchUserInventory = async () => {
+        if (!isSignedIn || !isLoaded) {
+            console.log("Clerk not loaded or user not signed in. Cannot fetch inventory.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const token = await getToken();
+
+            if (!token) {
+                console.error('Authentication token not available');
+                return;
+            }
+
+            const response = await fetch("http://localhost:8000/api/get_inventory", {
+                method: "GET",
+                mode: 'cors',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                console.error('Failed to fetch inventory');
+                return;
+            }
+
+            const inventoryData = await response.json();
+            console.log("User inventory:", inventoryData);
+
+            // Update the uploadedClothes state with the fetched inventory
+            // You might need to adjust this based on your backend response structure
+            if (inventoryData) {
+                const processedInventory = inventoryData.map(record => {
+                    let imageUrl;
+
+                    // Debug: log the first part of the image data to see its format
+                    console.log('Image data type:', typeof record.image_base64);
+                    console.log('Image data preview:', record.image_base64.substring(0, 50) + '...');
+                    console.log('Image data length:', record.image_base64.length);
+
+                    try {
+                        // Check if the data is already a data URL
+                        if (record.image_base64.startsWith('data:image/')) {
+                            imageUrl = record.image_base64;
+                        } else {
+                            // Assume it's base64 encoded data
+                            const binaryString = atob(record.image_base64);
+                            const bytes = new Uint8Array(binaryString.length);
+                            for (let i = 0; i < binaryString.length; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+
+                            const imageBlob = new Blob([bytes], { type: 'image/png' });
+                            imageUrl = URL.createObjectURL(imageBlob);
+                        }
+                    } catch (error) {
+                        console.error('Error processing image for record:', record, error);
+                        // Fallback: try to use the data as-is
+                        imageUrl = record.image_base64;
+                    }
+
+                    return {
+                        image: imageUrl,
+                        category: record.product_type || record.category,
+                        id: record.id // if your backend provides an id
+                    };
+                });
+
+                console.log('Processed inventory items:', processedInventory.length);
+                console.log('First processed item:', processedInventory[0]);
+
+                setUploadedClothes(processedInventory);
+            }
+        } catch (error) {
+            console.error('Error fetching inventory:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Load inventory when component mounts and user is signed in
+    useEffect(() => {
+        if (isSignedIn && isLoaded) {
+            fetchUserInventory();
+        }
+    }, [isLoaded, isSignedIn]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -45,7 +136,7 @@ function App() {
             try {
                 // Get the JWT token from Clerk
                 const token = await getToken();
-                
+
                 if (!token) {
                     console.error('Authentication token not available');
                     return;
@@ -59,7 +150,7 @@ function App() {
                     },
                     body: formData
                 });
-                
+
                 // Handle response if needed
                 if (!response.ok) {
                     console.error('Failed to upload image');
@@ -67,17 +158,19 @@ function App() {
             } catch (error) {
                 console.error('Error uploading image:', error);
             }
-            
+
             setPendingFile(null); // Clear the pending file
         }
 
-        setUploadedClothes((prev) => [
-            ...prev,
-            {
-                image: inputtedImage,
-                category: type,
-            },
-        ]);
+        setUploadedClothes((prev) => {
+            return [
+                ...prev,
+                {
+                    image: inputtedImage,
+                    category: type,
+                },
+            ]
+        });
     };
 
     return (
@@ -93,19 +186,19 @@ function App() {
             {uploadedClothes.length > 0 && (
                 <div className="clothes-grid">
                     {uploadedClothes.map((item, idx) => (
-                            <div key={idx} className="div-card">
-                                <Card
-                                    key={idx}
-                                    imageSrc={item.image}
-                                    category={item.category}
-                                />
-                                <button
-                                    className="delete"
-                                    onClick={() => handleDelete(idx)}
-                                >
-                                    Delete
-                                </button>
-                            </div>
+                        <div key={idx} className="div-card">
+                            <Card
+                                key={idx}
+                                imageSrc={item.image}
+                                category={item.category}
+                            />
+                            <button
+                                className="delete"
+                                onClick={() => handleDelete(idx)}
+                            >
+                                Delete
+                            </button>
+                        </div>
                     ))}
                 </div>
             )}
