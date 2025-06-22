@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./index.css";
 import Header from "./header";
 import Prompt from "./prompt";
-import Logo from "./logo";
+// import Logo from "./logo";
 import Options from "./options";
 import Card from "./card";
 
@@ -56,7 +56,7 @@ function App() {
                     ))}
                 </div>
             )}
-            <Logo className="main-logo" />
+            {/*<Logo className="main-logo" />*/}
         </>
     );
 }

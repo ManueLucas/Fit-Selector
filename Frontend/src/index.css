@@ -20,7 +20,12 @@ body {
   font-size: 1.8rem;
 }
 
-#h1-name, #h2-slogan, #h1-question {
+#h1-name {
+  display: inline;
+/*  border: 1px solid black;*/
+}
+
+#h2-slogan, #h1-question { /*#h1-name,  */
 text-align: center;
 }
 
@@ -33,7 +38,8 @@ text-align: center;
 
 #input-fit {
   margin-top: 20px;
-  width: 700px;
+  max-width: 700px;
+  width: 75%;
   height: 30px;
   border: 0.6px solid lightgray;
   border-radius: 25px;
@@ -164,15 +170,41 @@ text-align: center;
 }
 
 .main-logo {
-  width:230px;
-display: block;
-margin: 0 auto;
+  width:50px;
+  height: 100%;
+/*  border: 1px solid red;*/
+/*display: block;*/
+/*margin: 0 auto;*/
+}
+
+#logo-container {
+  display: flex;
+  align-items: center;
+  padding-left: 25px;
+/*  vertical-align: middle;*/
+/*  width: 235px;*/
+/*  display: flex;*/
+/*  vertical-align: middle;*/
+/*  border: 1px solid blue;*/
 }
 
 #login-section {
   position: absolute;
   right: 22px;
+  top: 20px;
+
+/*  background: transparent;*/
 /*  float: right;*/
+}
+
+#signin-button {
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
 }
 
 .clothes-grid {
