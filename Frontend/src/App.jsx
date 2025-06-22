@@ -15,6 +15,7 @@ function App() {
     const [inputtedImage, setInputtedImage] = useState("");
     const [uploadedClothes, setUploadedClothes] = useState([]);
     const [pendingFile, setPendingFile] = useState(null);
+    const [activeMode, setActiveMode] = useState("search");
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -30,6 +31,11 @@ function App() {
         setUploadedClothes((prev) =>
             prev.filter((_, idx) => idx !== indexToDelete)
         );
+    };
+
+    const handleModeChange = (mode) => {
+        setActiveMode(mode);
+        console.log("Mode changed to:", mode);
     };
 
     const handleCategorySelect = async (type) => {
@@ -83,12 +89,14 @@ function App() {
     return (
         <>
             <Header />
-            <Prompt />
+            <Prompt activeMode={activeMode} />
             <Options
                 handleFileChange={handleFileChange}
                 showPopup={showPopup}
                 inputtedImage={inputtedImage}
                 handleCategorySelect={handleCategorySelect}
+                activeMode={activeMode}
+                onModeChange={handleModeChange}
             />
             {uploadedClothes.length > 0 && (
                 <div className="clothes-grid">

@@ -5,12 +5,14 @@ export default function Options({
     showPopup,
     inputtedImage,
     handleCategorySelect,
+    activeMode,
+    onModeChange,
 }) {
 
-    const handleModeChange = (mode) => {
-        console.log('Mode changed to:', mode);
-        // Handle the mode change logic here
-    };
+    // const handleModeChange = (mode) => {
+    //     console.log('Mode changed to:', mode);
+    //     // Handle the mode change logic here
+    // };
 
     const handleRandomize = () => {
         console.log('Dice button clicked!');
@@ -33,7 +35,8 @@ export default function Options({
                 />
 
                 <Selector
-                    onModeChange={handleModeChange}
+                    activeMode={activeMode}
+                    onModeChange={onModeChange}
                     onRandomize={handleRandomize}
                 />
 
