@@ -19,7 +19,12 @@ body {
     font-size: 1.8rem;
 }
 
-#h1-name, #h2-slogan, #h1-question {
+#h1-name {
+  display: inline;
+/*  border: 1px solid black;*/
+}
+
+#h2-slogan, #h1-question { /*#h1-name,  */
 text-align: center;
 }
 
@@ -176,6 +181,7 @@ margin: 0 auto;
 #signin-button {
   border: none;
   background: none;
+  cursor: pointer;
   margin: 0;
   padding: 0;
   font-size: 16px;
