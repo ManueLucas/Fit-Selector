@@ -1,6 +1,19 @@
+import { useState } from "react";
+import OutfitViewer from './OutfitViewer';
+
 export default function Prompt({ activeMode }) {
+    const [showOutfit, setShowOutfit] = useState(false);
+    const [outfitIds, setOutfitIds] = useState({
+        shirt: "123",
+        pants: "456", 
+        shoes: "789",
+        jacket: "101",
+        accessories: "112"
+    });
+
     return (
         <>
+            <div>
             <div id="div-input">
                 <input
                     type="text"
@@ -10,9 +23,21 @@ export default function Prompt({ activeMode }) {
                 />
                 {activeMode === "generate" && (
                     <div id="generate-button-div">
-                        <button id="generate-button">Generate</button>
+                        <button id="generate-button" onClick={() => setShowOutfit(true)}>Generate</button>
                     </div>
                 )}
+            </div>
+
+            <OutfitViewer
+                shirtId={outfitIds.shirt}
+                pantsId={outfitIds.pants}
+                shoesId={outfitIds.shoes}
+                jacketId={outfitIds.jacket}
+                accessoriesId={outfitIds.accessories}
+                isVisible={showOutfit}
+                onClose={() => setShowOutfit(false)}
+            />
+
             </div>
         </>
     );
